@@ -85,6 +85,22 @@ export default function YouTubeThumbnailSize() {
             <p className="font-medium text-gray-900 text-sm">LinkedIn Image Sizes</p>
             <p className="text-xs text-gray-500 mt-0.5">Profile, banner & post images</p>
           </Link>
+          <Link href="/twitter-image-sizes" className="block bg-white rounded-lg border border-gray-200 px-4 py-3 hover:border-rose-400 hover:shadow-sm transition">
+            <p className="font-medium text-gray-900 text-sm">Twitter/X Image Sizes</p>
+            <p className="text-xs text-gray-500 mt-0.5">Profile, header & post images</p>
+          </Link>
+          <Link href="/pinterest-pin-sizes" className="block bg-white rounded-lg border border-gray-200 px-4 py-3 hover:border-rose-400 hover:shadow-sm transition">
+            <p className="font-medium text-gray-900 text-sm">Pinterest Pin Sizes</p>
+            <p className="text-xs text-gray-500 mt-0.5">Standard pins, idea pins & boards</p>
+          </Link>
+          <Link href="/snapchat-image-sizes" className="block bg-white rounded-lg border border-gray-200 px-4 py-3 hover:border-rose-400 hover:shadow-sm transition">
+            <p className="font-medium text-gray-900 text-sm">Snapchat Image Sizes</p>
+            <p className="text-xs text-gray-500 mt-0.5">Snaps, geofilters & stories</p>
+          </Link>
+          <Link href="/threads-image-sizes" className="block bg-white rounded-lg border border-gray-200 px-4 py-3 hover:border-rose-400 hover:shadow-sm transition">
+            <p className="font-medium text-gray-900 text-sm">Threads Image Sizes</p>
+            <p className="text-xs text-gray-500 mt-0.5">Feed images & profile photos</p>
+          </Link>
         </div>
       </nav>
 

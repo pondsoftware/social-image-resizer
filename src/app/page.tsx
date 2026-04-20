@@ -38,6 +38,22 @@ export default function Home() {
             <h3 className="font-semibold text-gray-900 mb-1">LinkedIn Image Sizes</h3>
             <p className="text-sm text-gray-500">Profile, banner, post & company logos</p>
           </Link>
+          <Link href="/twitter-image-sizes" className="block bg-white rounded-xl border border-gray-200 p-5 hover:border-rose-400 hover:shadow-md transition">
+            <h3 className="font-semibold text-gray-900 mb-1">Twitter/X Image Sizes</h3>
+            <p className="text-sm text-gray-500">Profile, header, posts & card images</p>
+          </Link>
+          <Link href="/pinterest-pin-sizes" className="block bg-white rounded-xl border border-gray-200 p-5 hover:border-rose-400 hover:shadow-md transition">
+            <h3 className="font-semibold text-gray-900 mb-1">Pinterest Pin Sizes</h3>
+            <p className="text-sm text-gray-500">Standard pins, idea pins & board covers</p>
+          </Link>
+          <Link href="/snapchat-image-sizes" className="block bg-white rounded-xl border border-gray-200 p-5 hover:border-rose-400 hover:shadow-md transition">
+            <h3 className="font-semibold text-gray-900 mb-1">Snapchat Image Sizes</h3>
+            <p className="text-sm text-gray-500">Snaps, geofilters, stories & ads</p>
+          </Link>
+          <Link href="/threads-image-sizes" className="block bg-white rounded-xl border border-gray-200 p-5 hover:border-rose-400 hover:shadow-md transition">
+            <h3 className="font-semibold text-gray-900 mb-1">Threads Image Sizes</h3>
+            <p className="text-sm text-gray-500">Feed images, profile & link previews</p>
+          </Link>
         </div>
       </nav>
 
