@@ -51,7 +51,7 @@ export default function LinkedInImageSizes() {
           </div>
         </div>
 
-        <div className="bg-blue-50 rounded-xl border border-blue-200 p-6 mb-8">
+        <div className="bg-rose-50 rounded-xl border border-rose-200 p-6 mb-8">
           <h2 className="text-lg font-semibold text-gray-900 mb-3">LinkedIn Image Tips</h2>
           <ul className="space-y-2 text-sm text-gray-700">
             <li><strong>Profile photos:</strong> Use a professional headshot with good lighting. The circular crop means corners are hidden — keep your face centered.</li>
@@ -66,7 +66,7 @@ export default function LinkedInImageSizes() {
       <ImageResizer defaultPlatform="linkedin" />
 
       <div className="mt-8 text-center">
-        <a href="/" className="text-blue-600 hover:underline text-sm">
+        <a href="/" className="text-rose-600 hover:underline text-sm">
           ← Back to all platforms
         </a>
       </div>

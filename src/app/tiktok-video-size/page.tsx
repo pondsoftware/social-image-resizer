@@ -55,7 +55,7 @@ export default function TikTokVideoSize() {
       <ImageResizer defaultPlatform="tiktok" />
 
       <div className="mt-8 text-center">
-        <a href="/" className="text-blue-600 hover:underline text-sm">
+        <a href="/" className="text-rose-600 hover:underline text-sm">
           ← Back to all platforms
         </a>
       </div>

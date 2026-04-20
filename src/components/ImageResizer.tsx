@@ -263,8 +263,8 @@ export default function ImageResizer({ defaultPlatform }: ImageResizerProps) {
           onClick={() => fileInputRef.current?.click()}
           className={`border-2 border-dashed rounded-xl p-16 text-center cursor-pointer transition ${
             isDragging
-              ? "border-blue-500 bg-blue-50"
-              : "border-gray-300 hover:border-blue-400 hover:bg-gray-50"
+              ? "border-rose-500 bg-rose-50"
+              : "border-gray-300 hover:border-rose-400 hover:bg-gray-50"
           }`}
         >
           <input
@@ -310,7 +310,7 @@ export default function ImageResizer({ defaultPlatform }: ImageResizerProps) {
                     onClick={() => selectPlatform(p)}
                     className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition ${
                       selectedPlatform.id === p.id
-                        ? "bg-blue-100 text-blue-700"
+                        ? "bg-rose-100 text-rose-700"
                         : "text-gray-600 hover:bg-gray-100"
                     }`}
                   >
@@ -330,7 +330,7 @@ export default function ImageResizer({ defaultPlatform }: ImageResizerProps) {
                     onClick={() => selectSize(s)}
                     className={`w-full text-left px-3 py-2 rounded-lg text-sm transition ${
                       selectedSize.name === s.name
-                        ? "bg-blue-100 text-blue-700 font-medium"
+                        ? "bg-rose-100 text-rose-700 font-medium"
                         : "text-gray-600 hover:bg-gray-100"
                     }`}
                   >
@@ -376,7 +376,7 @@ export default function ImageResizer({ defaultPlatform }: ImageResizerProps) {
                   </button>
                   <button
                     onClick={downloadResized}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition"
+                    className="px-4 py-2 bg-rose-600 text-white rounded-lg text-sm font-medium hover:bg-rose-700 transition"
                   >
                     Download
                   </button>
