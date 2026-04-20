@@ -2,17 +2,21 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import { platforms, Platform, PlatformSize } from "@/data/platforms";
+import JSZip from "jszip";
 
-export default function ImageResizer() {
+interface ImageResizerProps {
+  defaultPlatform?: string;
+}
+
+export default function ImageResizer({ defaultPlatform }: ImageResizerProps) {
+  const initialPlatform = platforms.find((p) => p.id === defaultPlatform) || platforms[0];
+
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageEl, setImageEl] = useState<HTMLImageElement | null>(null);
-  const [selectedPlatform, setSelectedPlatform] = useState<Platform>(
-    platforms[0]
-  );
-  const [selectedSize, setSelectedSize] = useState<PlatformSize>(
-    platforms[0].sizes[0]
-  );
+  const [selectedPlatform, setSelectedPlatform] = useState<Platform>(initialPlatform);
+  const [selectedSize, setSelectedSize] = useState<PlatformSize>(initialPlatform.sizes[0]);
   const [isDragging, setIsDragging] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
@@ -122,6 +126,31 @@ export default function ImageResizer() {
     dragStart.current = null;
   }, []);
 
+  // Touch events for mobile drag repositioning
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    dragStart.current = {
+      x: touch.clientX,
+      y: touch.clientY,
+      ox: offsetX,
+      oy: offsetY,
+    };
+  };
+
+  const handleTouchMove = useCallback((e: TouchEvent) => {
+    if (!dragStart.current) return;
+    e.preventDefault(); // Prevent scrolling while dragging
+    const touch = e.touches[0];
+    const dx = touch.clientX - dragStart.current.x;
+    const dy = touch.clientY - dragStart.current.y;
+    setOffsetX(dragStart.current.ox + dx);
+    setOffsetY(dragStart.current.oy + dy);
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    dragStart.current = null;
+  }, []);
+
   useEffect(() => {
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
@@ -131,32 +160,48 @@ export default function ImageResizer() {
     };
   }, [handleMouseMove, handleMouseUp]);
 
-  const downloadResized = () => {
-    if (!imageEl) return;
-    const exportCanvas = document.createElement("canvas");
-    exportCanvas.width = selectedSize.width;
-    exportCanvas.height = selectedSize.height;
-    const ctx = exportCanvas.getContext("2d");
-    if (!ctx) return;
+  useEffect(() => {
+    const previewEl = previewRef.current;
+    if (!previewEl) return;
+    previewEl.addEventListener("touchmove", handleTouchMove, { passive: false });
+    previewEl.addEventListener("touchend", handleTouchEnd);
+    return () => {
+      previewEl.removeEventListener("touchmove", handleTouchMove);
+      previewEl.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [handleTouchMove, handleTouchEnd]);
 
-    const imgAspect = imageEl.naturalWidth / imageEl.naturalHeight;
-    const targetAspect = selectedSize.width / selectedSize.height;
+  const renderToCanvas = (size: PlatformSize): HTMLCanvasElement => {
+    const exportCanvas = document.createElement("canvas");
+    exportCanvas.width = size.width;
+    exportCanvas.height = size.height;
+    const ctx = exportCanvas.getContext("2d")!;
+
+    const imgAspect = imageEl!.naturalWidth / imageEl!.naturalHeight;
+    const targetAspect = size.width / size.height;
 
     let drawWidth: number, drawHeight: number;
     if (imgAspect > targetAspect) {
-      drawHeight = selectedSize.height;
-      drawWidth = imageEl.naturalWidth * (selectedSize.height / imageEl.naturalHeight);
+      drawHeight = size.height;
+      drawWidth = imageEl!.naturalWidth * (size.height / imageEl!.naturalHeight);
     } else {
-      drawWidth = selectedSize.width;
-      drawHeight = imageEl.naturalHeight * (selectedSize.width / imageEl.naturalWidth);
+      drawWidth = size.width;
+      drawHeight = imageEl!.naturalHeight * (size.width / imageEl!.naturalWidth);
     }
 
-    const baseX = (selectedSize.width - drawWidth) / 2;
-    const baseY = (selectedSize.height - drawHeight) / 2;
+    const baseX = (size.width - drawWidth) / 2;
+    const baseY = (size.height - drawHeight) / 2;
 
     ctx.fillStyle = "#000";
-    ctx.fillRect(0, 0, selectedSize.width, selectedSize.height);
-    ctx.drawImage(imageEl, baseX + offsetX, baseY + offsetY, drawWidth, drawHeight);
+    ctx.fillRect(0, 0, size.width, size.height);
+    ctx.drawImage(imageEl!, baseX + offsetX, baseY + offsetY, drawWidth, drawHeight);
+
+    return exportCanvas;
+  };
+
+  const downloadResized = () => {
+    if (!imageEl) return;
+    const exportCanvas = renderToCanvas(selectedSize);
 
     exportCanvas.toBlob(
       (blob) => {
@@ -164,13 +209,44 @@ export default function ImageResizer() {
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `${selectedPlatform.name.toLowerCase()}-${selectedSize.name.toLowerCase().replace(/[^a-z0-9]/g, "-")}-${selectedSize.width}x${selectedSize.height}.jpg`;
+        a.download = `${selectedPlatform.name.toLowerCase().replace(/[^a-z0-9]/g, "-")}-${selectedSize.name.toLowerCase().replace(/[^a-z0-9]/g, "-")}-${selectedSize.width}x${selectedSize.height}.jpg`;
         a.click();
         URL.revokeObjectURL(url);
       },
       "image/jpeg",
       0.95
     );
+  };
+
+  const downloadAllSizes = async () => {
+    if (!imageEl) return;
+    setIsExporting(true);
+
+    try {
+      const zip = new JSZip();
+      const platformName = selectedPlatform.name.toLowerCase().replace(/[^a-z0-9]/g, "-");
+
+      for (const size of selectedPlatform.sizes) {
+        const canvas = renderToCanvas(size);
+        const blob = await new Promise<Blob | null>((resolve) =>
+          canvas.toBlob(resolve, "image/jpeg", 0.95)
+        );
+        if (blob) {
+          const fileName = `${platformName}-${size.name.toLowerCase().replace(/[^a-z0-9]/g, "-")}-${size.width}x${size.height}.jpg`;
+          zip.file(fileName, blob);
+        }
+      }
+
+      const zipBlob = await zip.generateAsync({ type: "blob" });
+      const url = URL.createObjectURL(zipBlob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${platformName}-all-sizes.zip`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   return (
@@ -281,7 +357,7 @@ export default function ImageResizer() {
           {/* Preview */}
           <div className="lg:col-span-2 space-y-4">
             <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex flex-wrap justify-between items-center mb-4 gap-2">
                 <div>
                   <h3 className="font-semibold text-gray-900">
                     {selectedPlatform.name} — {selectedSize.name}
@@ -290,17 +366,27 @@ export default function ImageResizer() {
                     {selectedSize.width} x {selectedSize.height}px
                   </p>
                 </div>
-                <button
-                  onClick={downloadResized}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition"
-                >
-                  Download
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={downloadAllSizes}
+                    disabled={isExporting}
+                    className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isExporting ? "Exporting..." : "Download All Sizes"}
+                  </button>
+                  <button
+                    onClick={downloadResized}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition"
+                  >
+                    Download
+                  </button>
+                </div>
               </div>
               <div
                 ref={previewRef}
-                className="flex justify-center bg-gray-100 rounded-lg p-4 cursor-move"
+                className="flex justify-center bg-gray-100 rounded-lg p-4 cursor-move touch-none"
                 onMouseDown={handleMouseDown}
+                onTouchStart={handleTouchStart}
               >
                 <canvas
                   ref={canvasRef}

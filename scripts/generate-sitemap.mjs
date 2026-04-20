@@ -2,7 +2,14 @@ import { writeFileSync } from "fs";
 
 const DOMAIN = "https://imageresizers.net";
 
-const urls = ["/"];
+const urls = [
+  "/",
+  "/instagram-image-sizes",
+  "/youtube-thumbnail-size",
+  "/facebook-cover-photo-size",
+  "/tiktok-video-size",
+  "/linkedin-image-sizes",
+];
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
