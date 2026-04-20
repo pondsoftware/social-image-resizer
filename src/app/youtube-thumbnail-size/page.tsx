@@ -1,4 +1,5 @@
 import ImageResizer from "@/components/ImageResizer";
+import Link from "next/link";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -60,11 +61,32 @@ export default function YouTubeThumbnailSize() {
 
       <ImageResizer defaultPlatform="youtube" />
 
-      <div className="mt-8 text-center">
-        <a href="/" className="text-rose-600 hover:underline text-sm">
-          ← Back to all platforms
-        </a>
-      </div>
+      <nav className="mt-10 border-t border-gray-200 pt-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-gray-900">Other Platform Guides</h2>
+          <Link href="/" className="text-sm text-rose-600 hover:underline">
+            ← All platforms
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <Link href="/instagram-image-sizes" className="block bg-white rounded-lg border border-gray-200 px-4 py-3 hover:border-rose-400 hover:shadow-sm transition">
+            <p className="font-medium text-gray-900 text-sm">Instagram Image Sizes</p>
+            <p className="text-xs text-gray-500 mt-0.5">Feed, stories, reels & profile</p>
+          </Link>
+          <Link href="/facebook-cover-photo-size" className="block bg-white rounded-lg border border-gray-200 px-4 py-3 hover:border-rose-400 hover:shadow-sm transition">
+            <p className="font-medium text-gray-900 text-sm">Facebook Cover Photo Size</p>
+            <p className="text-xs text-gray-500 mt-0.5">Cover photos, posts & profile</p>
+          </Link>
+          <Link href="/tiktok-video-size" className="block bg-white rounded-lg border border-gray-200 px-4 py-3 hover:border-rose-400 hover:shadow-sm transition">
+            <p className="font-medium text-gray-900 text-sm">TikTok Video Size</p>
+            <p className="text-xs text-gray-500 mt-0.5">Video covers & photo posts</p>
+          </Link>
+          <Link href="/linkedin-image-sizes" className="block bg-white rounded-lg border border-gray-200 px-4 py-3 hover:border-rose-400 hover:shadow-sm transition">
+            <p className="font-medium text-gray-900 text-sm">LinkedIn Image Sizes</p>
+            <p className="text-xs text-gray-500 mt-0.5">Profile, banner & post images</p>
+          </Link>
+        </div>
+      </nav>
 
       <script
         type="application/ld+json"
@@ -82,6 +104,19 @@ export default function YouTubeThumbnailSize() {
               "price": "0",
               "priceCurrency": "USD"
             }
+          })
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://imageresizers.net" },
+              { "@type": "ListItem", "position": 2, "name": "YouTube Thumbnail Size", "item": "https://imageresizers.net/youtube-thumbnail-size" }
+            ]
           })
         }}
       />

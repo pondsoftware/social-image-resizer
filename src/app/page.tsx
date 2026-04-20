@@ -1,4 +1,5 @@
 import ImageResizer from "@/components/ImageResizer";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -13,6 +14,32 @@ export default function Home() {
           YouTube, Facebook, X, LinkedIn, Pinterest, and Twitch.
         </p>
       </div>
+
+      <nav className="mb-10">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Platform Size Guides</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <Link href="/instagram-image-sizes" className="block bg-white rounded-xl border border-gray-200 p-5 hover:border-rose-400 hover:shadow-md transition">
+            <h3 className="font-semibold text-gray-900 mb-1">Instagram Image Sizes</h3>
+            <p className="text-sm text-gray-500">Feed posts, stories, reels & profile photos</p>
+          </Link>
+          <Link href="/facebook-cover-photo-size" className="block bg-white rounded-xl border border-gray-200 p-5 hover:border-rose-400 hover:shadow-md transition">
+            <h3 className="font-semibold text-gray-900 mb-1">Facebook Cover Photo Size</h3>
+            <p className="text-sm text-gray-500">Cover photos, posts & profile pictures</p>
+          </Link>
+          <Link href="/youtube-thumbnail-size" className="block bg-white rounded-xl border border-gray-200 p-5 hover:border-rose-400 hover:shadow-md transition">
+            <h3 className="font-semibold text-gray-900 mb-1">YouTube Thumbnail Size</h3>
+            <p className="text-sm text-gray-500">Thumbnails, banners & profile photos</p>
+          </Link>
+          <Link href="/tiktok-video-size" className="block bg-white rounded-xl border border-gray-200 p-5 hover:border-rose-400 hover:shadow-md transition">
+            <h3 className="font-semibold text-gray-900 mb-1">TikTok Video Size</h3>
+            <p className="text-sm text-gray-500">Video covers, photo posts & profile photos</p>
+          </Link>
+          <Link href="/linkedin-image-sizes" className="block bg-white rounded-xl border border-gray-200 p-5 hover:border-rose-400 hover:shadow-md transition">
+            <h3 className="font-semibold text-gray-900 mb-1">LinkedIn Image Sizes</h3>
+            <p className="text-sm text-gray-500">Profile, banner, post & company logos</p>
+          </Link>
+        </div>
+      </nav>
 
       <ImageResizer />
 
@@ -89,6 +116,18 @@ export default function Home() {
                   "text": "Yes! Upload your image above, then select different platform presets to download correctly sized versions for each social network."
                 }
               }
+            ]
+          })
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://imageresizers.net" }
             ]
           })
         }}

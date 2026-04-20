@@ -281,6 +281,8 @@ export default function ImageResizer({ defaultPlatform }: ImageResizerProps) {
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
+            role="img"
+            aria-label="Upload image for social media resizing"
           >
             <path
               strokeLinecap="round"
