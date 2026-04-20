@@ -9,6 +9,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  icons: {
+    icon: "/favicon.svg",
+  },
   title: "Social Media Image Resizer — Resize for Instagram, TikTok, YouTube & More",
   description:
     "Resize images for any social media platform. Preview how your image will look cropped, then download the perfect size for Instagram, TikTok, YouTube, LinkedIn, X, and more.",
