@@ -1,0 +1,362 @@
+"use client";
+
+import { useState, useRef, useCallback, useEffect } from "react";
+import { platforms, Platform, PlatformSize } from "@/data/platforms";
+
+export default function ImageResizer() {
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [imageEl, setImageEl] = useState<HTMLImageElement | null>(null);
+  const [selectedPlatform, setSelectedPlatform] = useState<Platform>(
+    platforms[0]
+  );
+  const [selectedSize, setSelectedSize] = useState<PlatformSize>(
+    platforms[0].sizes[0]
+  );
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
+
+  // Drag offset for repositioning
+  const [offsetX, setOffsetX] = useState(0);
+  const [offsetY, setOffsetY] = useState(0);
+  const dragStart = useRef<{ x: number; y: number; ox: number; oy: number } | null>(null);
+
+  const loadImage = useCallback((file: File) => {
+    const url = URL.createObjectURL(file);
+    setImageUrl(url);
+    const img = new Image();
+    img.onload = () => {
+      setImageEl(img);
+      setOffsetX(0);
+      setOffsetY(0);
+    };
+    img.src = url;
+  }, []);
+
+  const handleFileDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragging(false);
+      const file = e.dataTransfer.files[0];
+      if (file?.type.startsWith("image/")) loadImage(file);
+    },
+    [loadImage]
+  );
+
+  const selectPlatform = (platform: Platform) => {
+    setSelectedPlatform(platform);
+    setSelectedSize(platform.sizes[0]);
+    setOffsetX(0);
+    setOffsetY(0);
+  };
+
+  const selectSize = (size: PlatformSize) => {
+    setSelectedSize(size);
+    setOffsetX(0);
+    setOffsetY(0);
+  };
+
+  // Preview rendering
+  useEffect(() => {
+    if (!imageEl || !canvasRef.current) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    // Scale canvas to fit in preview while maintaining aspect ratio
+    const maxPreviewWidth = 500;
+    const maxPreviewHeight = 400;
+    const scaleX = maxPreviewWidth / selectedSize.width;
+    const scaleY = maxPreviewHeight / selectedSize.height;
+    const scale = Math.min(scaleX, scaleY, 1);
+    canvas.width = selectedSize.width * scale;
+    canvas.height = selectedSize.height * scale;
+
+    // Calculate how to fit the image into the target dimensions (cover)
+    const imgAspect = imageEl.naturalWidth / imageEl.naturalHeight;
+    const targetAspect = selectedSize.width / selectedSize.height;
+
+    let drawWidth: number, drawHeight: number;
+    if (imgAspect > targetAspect) {
+      drawHeight = selectedSize.height;
+      drawWidth = imageEl.naturalWidth * (selectedSize.height / imageEl.naturalHeight);
+    } else {
+      drawWidth = selectedSize.width;
+      drawHeight = imageEl.naturalHeight * (selectedSize.width / imageEl.naturalWidth);
+    }
+
+    const baseX = (selectedSize.width - drawWidth) / 2;
+    const baseY = (selectedSize.height - drawHeight) / 2;
+
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(
+      imageEl,
+      (baseX + offsetX) * scale,
+      (baseY + offsetY) * scale,
+      drawWidth * scale,
+      drawHeight * scale
+    );
+  }, [imageEl, selectedSize, offsetX, offsetY]);
+
+  // Mouse drag for repositioning
+  const handleMouseDown = (e: React.MouseEvent) => {
+    dragStart.current = {
+      x: e.clientX,
+      y: e.clientY,
+      ox: offsetX,
+      oy: offsetY,
+    };
+  };
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!dragStart.current) return;
+    const dx = e.clientX - dragStart.current.x;
+    const dy = e.clientY - dragStart.current.y;
+    setOffsetX(dragStart.current.ox + dx);
+    setOffsetY(dragStart.current.oy + dy);
+  }, []);
+
+  const handleMouseUp = useCallback(() => {
+    dragStart.current = null;
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [handleMouseMove, handleMouseUp]);
+
+  const downloadResized = () => {
+    if (!imageEl) return;
+    const exportCanvas = document.createElement("canvas");
+    exportCanvas.width = selectedSize.width;
+    exportCanvas.height = selectedSize.height;
+    const ctx = exportCanvas.getContext("2d");
+    if (!ctx) return;
+
+    const imgAspect = imageEl.naturalWidth / imageEl.naturalHeight;
+    const targetAspect = selectedSize.width / selectedSize.height;
+
+    let drawWidth: number, drawHeight: number;
+    if (imgAspect > targetAspect) {
+      drawHeight = selectedSize.height;
+      drawWidth = imageEl.naturalWidth * (selectedSize.height / imageEl.naturalHeight);
+    } else {
+      drawWidth = selectedSize.width;
+      drawHeight = imageEl.naturalHeight * (selectedSize.width / imageEl.naturalWidth);
+    }
+
+    const baseX = (selectedSize.width - drawWidth) / 2;
+    const baseY = (selectedSize.height - drawHeight) / 2;
+
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, selectedSize.width, selectedSize.height);
+    ctx.drawImage(imageEl, baseX + offsetX, baseY + offsetY, drawWidth, drawHeight);
+
+    exportCanvas.toBlob(
+      (blob) => {
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${selectedPlatform.name.toLowerCase()}-${selectedSize.name.toLowerCase().replace(/[^a-z0-9]/g, "-")}-${selectedSize.width}x${selectedSize.height}.jpg`;
+        a.click();
+        URL.revokeObjectURL(url);
+      },
+      "image/jpeg",
+      0.95
+    );
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Drop Zone */}
+      {!imageUrl && (
+        <div
+          onDragOver={(e) => {
+            e.preventDefault();
+            setIsDragging(true);
+          }}
+          onDragLeave={() => setIsDragging(false)}
+          onDrop={handleFileDrop}
+          onClick={() => fileInputRef.current?.click()}
+          className={`border-2 border-dashed rounded-xl p-16 text-center cursor-pointer transition ${
+            isDragging
+              ? "border-blue-500 bg-blue-50"
+              : "border-gray-300 hover:border-blue-400 hover:bg-gray-50"
+          }`}
+        >
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={(e) =>
+              e.target.files?.[0] && loadImage(e.target.files[0])
+            }
+            className="hidden"
+          />
+          <svg
+            className="w-12 h-12 mx-auto text-gray-400 mb-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+            />
+          </svg>
+          <p className="text-lg font-medium text-gray-700">
+            Drop an image here or click to browse
+          </p>
+        </div>
+      )}
+
+      {imageUrl && imageEl && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Sidebar — Platform / Size selection */}
+          <div className="space-y-4">
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3">
+                Platform
+              </h3>
+              <div className="space-y-1">
+                {platforms.map((p) => (
+                  <button
+                    key={p.id}
+                    onClick={() => selectPlatform(p)}
+                    className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition ${
+                      selectedPlatform.id === p.id
+                        ? "bg-blue-100 text-blue-700"
+                        : "text-gray-600 hover:bg-gray-100"
+                    }`}
+                  >
+                    {p.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3">
+                Size
+              </h3>
+              <div className="space-y-1">
+                {selectedPlatform.sizes.map((s) => (
+                  <button
+                    key={s.name}
+                    onClick={() => selectSize(s)}
+                    className={`w-full text-left px-3 py-2 rounded-lg text-sm transition ${
+                      selectedSize.name === s.name
+                        ? "bg-blue-100 text-blue-700 font-medium"
+                        : "text-gray-600 hover:bg-gray-100"
+                    }`}
+                  >
+                    <span className="block">{s.name}</span>
+                    <span className="text-xs opacity-70">
+                      {s.width} x {s.height}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                if (imageUrl) URL.revokeObjectURL(imageUrl);
+                setImageUrl(null);
+                setImageEl(null);
+              }}
+              className="w-full px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300 transition"
+            >
+              Load Different Image
+            </button>
+          </div>
+
+          {/* Preview */}
+          <div className="lg:col-span-2 space-y-4">
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <div className="flex justify-between items-center mb-4">
+                <div>
+                  <h3 className="font-semibold text-gray-900">
+                    {selectedPlatform.name} — {selectedSize.name}
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    {selectedSize.width} x {selectedSize.height}px
+                  </p>
+                </div>
+                <button
+                  onClick={downloadResized}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition"
+                >
+                  Download
+                </button>
+              </div>
+              <div
+                ref={previewRef}
+                className="flex justify-center bg-gray-100 rounded-lg p-4 cursor-move"
+                onMouseDown={handleMouseDown}
+              >
+                <canvas
+                  ref={canvasRef}
+                  className="max-w-full rounded shadow-sm"
+                  style={{ imageRendering: "auto" }}
+                />
+              </div>
+              <p className="text-xs text-gray-400 text-center mt-2">
+                Drag to reposition your image within the frame
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Size Reference */}
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          Social Media Image Size Cheat Sheet (2024)
+        </h2>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-gray-200">
+                <th className="text-left py-2 pr-4 font-medium text-gray-600">
+                  Platform
+                </th>
+                <th className="text-left py-2 pr-4 font-medium text-gray-600">
+                  Type
+                </th>
+                <th className="text-left py-2 font-medium text-gray-600">
+                  Dimensions
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {platforms.flatMap((p) =>
+                p.sizes.map((s, i) => (
+                  <tr
+                    key={`${p.id}-${s.name}`}
+                    className="border-b border-gray-100"
+                  >
+                    <td className="py-2 pr-4 text-gray-900">
+                      {i === 0 ? p.name : ""}
+                    </td>
+                    <td className="py-2 pr-4 text-gray-600">{s.name}</td>
+                    <td className="py-2 text-gray-600 font-mono text-xs">
+                      {s.width} x {s.height}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
