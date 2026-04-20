@@ -12,6 +12,20 @@ export const metadata: Metadata = {
   title: "Social Media Image Resizer — Resize for Instagram, TikTok, YouTube & More",
   description:
     "Resize images for any social media platform. Preview how your image will look cropped, then download the perfect size for Instagram, TikTok, YouTube, LinkedIn, X, and more.",
+  openGraph: {
+    title: "Social Media Image Resizer",
+    description:
+      "Resize images for any social media platform. Preview how your image will look cropped, then download the perfect size for Instagram, TikTok, YouTube, LinkedIn, X, and more.",
+    type: "website",
+    url: "https://imageresizers.net",
+    siteName: "Social Media Image Resizer",
+  },
+  twitter: {
+    card: "summary",
+    title: "Social Media Image Resizer",
+    description:
+      "Resize images for any social media platform. Preview how your image will look cropped, then download the perfect size for Instagram, TikTok, YouTube, LinkedIn, X, and more.",
+  },
 };
 
 export default function RootLayout({
