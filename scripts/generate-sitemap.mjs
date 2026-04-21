@@ -4,11 +4,15 @@ const DOMAIN = "https://imageresizers.net";
 
 const urls = [
   "/",
-  "/instagram-image-sizes",
-  "/youtube-thumbnail-size",
   "/facebook-cover-photo-size",
-  "/tiktok-video-size",
+  "/instagram-image-sizes",
   "/linkedin-image-sizes",
+  "/pinterest-pin-sizes",
+  "/snapchat-image-sizes",
+  "/threads-image-sizes",
+  "/tiktok-video-size",
+  "/twitter-image-sizes",
+  "/youtube-thumbnail-size",
 ];
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
