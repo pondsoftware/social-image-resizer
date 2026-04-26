@@ -16,22 +16,22 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.svg",
   },
-  title: "Social Media Image Resizer — Resize for Instagram, TikTok, YouTube & More",
+  title: "Social Media Image Resizer — Instagram, TikTok & YouTube",
   description:
-    "Resize images for any social media platform. Preview how your image will look cropped, then download the perfect size for Instagram, TikTok, YouTube, LinkedIn, X, and more.",
+    "Resize and preview images for Instagram, TikTok, YouTube, LinkedIn, and X. Get the perfect crop for every platform — free, no signup.",
   openGraph: {
-    title: "Social Media Image Resizer",
+    title: "Social Media Image Resizer — Instagram, TikTok & YouTube",
     description:
-      "Resize images for any social media platform. Preview how your image will look cropped, then download the perfect size for Instagram, TikTok, YouTube, LinkedIn, X, and more.",
+      "Resize and preview images for Instagram, TikTok, YouTube, LinkedIn, and X. Get the perfect crop for every platform — free, no signup.",
     type: "website",
     url: "https://imageresizers.net",
     siteName: "Social Media Image Resizer",
   },
   twitter: {
     card: "summary",
-    title: "Social Media Image Resizer",
+    title: "Social Media Image Resizer — Instagram, TikTok & YouTube",
     description:
-      "Resize images for any social media platform. Preview how your image will look cropped, then download the perfect size for Instagram, TikTok, YouTube, LinkedIn, X, and more.",
+      "Resize and preview images for Instagram, TikTok, YouTube, LinkedIn, and X. Get the perfect crop for every platform — free, no signup.",
   },
 };
 
