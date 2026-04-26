@@ -85,17 +85,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Related Image Tools */}
-      <section className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Related Image Tools</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
-          <a href="https://imageconverters.net" className="bg-white rounded-lg border border-gray-200 p-5 hover:border-blue-300 hover:shadow-sm transition group">
-            <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 mb-1">Image Format Converter</h3>
-            <p className="text-sm text-gray-500">Convert images between JPG, PNG, WebP, AVIF, and other formats — free and browser-based.</p>
-          </a>
-        </div>
-      </section>
-
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
