@@ -60,7 +60,81 @@ export default function Home() {
       <ImageResizer />
 
       <section className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">How to Choose the Right Size for Each Platform</h2>
+        <p className="text-gray-600 mb-6">
+          Every social network crops, scales, and compresses images differently. Picking the wrong dimensions
+          means your post arrives blurry, gets letterboxed with black bars, or has the most important part of
+          your photo cut off. Here&rsquo;s a quick reference for each major platform.
+        </p>
+
+        <h3 className="text-xl font-semibold text-gray-900 mt-6 mb-2">Instagram (Feed, Story, Reel)</h3>
+        <p className="text-gray-600 mb-4">
+          Instagram supports three feed aspect ratios: 1:1 (1080&times;1080) for classic squares, 4:5
+          (1080&times;1350) for portrait posts that take up the most screen real estate, and 1.91:1
+          (1080&times;566) for landscape. Stories and Reels are vertical 9:16 at 1080&times;1920. Keep important
+          subjects within the center 1080&times;1350 zone so nothing gets cropped when Instagram generates the
+          square feed thumbnail.
+        </p>
+
+        <h3 className="text-xl font-semibold text-gray-900 mt-6 mb-2">Facebook (Cover, Post, Profile)</h3>
+        <p className="text-gray-600 mb-4">
+          Facebook cover photos display at 820&times;312 on desktop and 640&times;360 on mobile, so upload at
+          820&times;462 to look correct on both. Shared posts work best at 1200&times;630 (1.91:1) — the same
+          dimensions Facebook uses for link previews. Profile pictures crop to a circle at 170&times;170, but
+          upload a 320&times;320 square so the high-DPI version stays sharp.
+        </p>
+
+        <h3 className="text-xl font-semibold text-gray-900 mt-6 mb-2">Twitter/X, LinkedIn, and Pinterest</h3>
+        <p className="text-gray-600 mb-4">
+          Twitter/X in-stream images render at 1600&times;900 (16:9) but the timeline preview crops to roughly
+          1200&times;675, so center your subject. LinkedIn feed posts use 1200&times;627 for shared links and
+          1200&times;1500 for portrait single-image posts; the company banner is 1128&times;191. Pinterest
+          rewards tall pins — 1000&times;1500 (2:3) is the sweet spot, and idea pins are 1080&times;1920. Wider
+          than 2:3 and Pinterest crops the bottom in feeds.
+        </p>
+
+        <h3 className="text-xl font-semibold text-gray-900 mt-6 mb-2">YouTube Thumbnails and TikTok</h3>
+        <p className="text-gray-600 mb-4">
+          YouTube thumbnails are 1280&times;720 (16:9) at a minimum 640px wide and a 2MB cap; JPG, PNG, and GIF
+          are accepted. Channel banners need a 2560&times;1440 source so the safe area renders cleanly across
+          phone, tablet, TV, and desktop. TikTok video covers are 1080&times;1920 (9:16) — the same as Reels and
+          Stories — and TikTok now supports 1080&times;1350 photo carousels with the same crop rules as
+          Instagram portrait.
+        </p>
+
+        <h2 className="text-2xl font-bold text-gray-900 mt-10 mb-4">Common Resizing Mistakes to Avoid</h2>
+        <p className="text-gray-600 mb-4">
+          Most quality complaints aren&rsquo;t about the platform — they&rsquo;re about how the image was
+          prepared before upload. A few patterns account for almost all of them:
+        </p>
+        <ul className="list-disc pl-6 space-y-3 text-gray-600 mb-4">
+          <li>
+            <strong>Uploading larger than the recommended size.</strong> Every platform downscales — and their
+            algorithms are tuned for noise, not sharpness. Resize to the exact target dimensions before
+            uploading and you&rsquo;ll keep crisp text and clean edges.
+          </li>
+          <li>
+            <strong>Using JPG for graphics with text or sharp edges.</strong> JPG compression smears anything
+            with hard contrast lines (logos, screenshots, infographics). Use PNG for graphics and reserve JPG
+            for photographs.
+          </li>
+          <li>
+            <strong>Re-saving the same JPG over and over.</strong> Each save introduces additional
+            compression. Always re-export from your original source rather than editing and re-saving the
+            uploaded copy.
+          </li>
+          <li>
+            <strong>Ignoring aspect ratio.</strong> Forcing a 16:9 image into a 1:1 slot stretches faces or
+            cuts off heads. Crop intentionally before resizing — don&rsquo;t let the platform decide.
+          </li>
+          <li>
+            <strong>Forgetting safe zones.</strong> Profile pictures crop to a circle and cover photos crop
+            differently on mobile vs. desktop. Keep critical subject matter at least 10% inside the canvas
+            edge.
+          </li>
+        </ul>
+
+        <h2 className="text-2xl font-bold text-gray-900 mt-10 mb-6">Frequently Asked Questions</h2>
         <div className="space-y-6">
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">What size should an Instagram post be?</h3>
